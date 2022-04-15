@@ -11,6 +11,10 @@ namespace LibHacBuild;
 
 public class Build
 {
+    // Adapted from https://github.com/Thealexbarney/LibHac/blob/master/build/Build.cs
+    // Removed all dependencies.
+    // Distributed as a dotnet tool.
+
     public static int Main(string[] args)
     {
         if (args.Length == 0)
