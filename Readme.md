@@ -20,14 +20,19 @@ Your nupkg will be modified to become deterministic (your build output must be d
 
 Basically, it replaces randoms ID with a deterministic one, and changes the build date to a fixed one.
 
-# Why ?
+# It doesn't work!
+
+Make sure that your DLLs & content is deterministic!
+If you have still have problems, open an issue.
+
+# Why?
 
 Supply chain attacks are becoming more and more commons.  
 Reproducible builds allow to easily check if the distributed binaries are the product of the shared sources.
 
 More at https://reproducible-builds.org/.
 
-# So why NuGet don't allow you to do it ?
+# So why NuGet don't allow you to do it?
 
 NuGet did implement the feature, but [rolled it back](https://github.com/NuGet/Home/issues/8599) soon after, because it was a breaking change for some deploy tool.  
 Basically, because the date of the dll is older or equal to the dll deployed, the tool doesn't deploy it.
