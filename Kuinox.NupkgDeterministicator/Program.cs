@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -32,14 +33,14 @@ public class Build
             Console.Error.WriteLine($"File {args[0]} doesn't exist");
         }
 
-        var dateTime = args.Length > 1 ? DateTime.Parse(args[1]) : new DateTime(2000, 1, 1);
+        var dateTime = args.Length > 1 ? DateTime.Parse(args[1], CultureInfo.InvariantCulture) : new DateTime(2000, 1, 1);
 
         RepackNugetPackage(args[0], dateTime);
         return 0;
     }
 
     const string Help =
-@"Usage: nupkg-deterministicator [path-to-nupkg]
+@"Usage: nupkg-deterministicator [path-to-nupkg] (optional-date)
 Try to make a NuGet package (.nupkg) deterministic.
 It will try to produce a bit to bit identical .nupkg as long as the packed content is the same.
 ";
@@ -97,20 +98,18 @@ It will try to produce a bit to bit identical .nupkg as long as the packed conte
 
     public static string CalcPsmdcpName(string libDir)
     {
-        using (var sha = SHA256.Create())
+        using var sha = SHA256.Create();
+        if (Directory.Exists(libDir))
         {
-            if (Directory.Exists(libDir))
+            foreach (string file in Directory.EnumerateFiles(libDir, "*", SearchOption.AllDirectories))
             {
-                foreach (string file in Directory.EnumerateFiles(libDir, "*", SearchOption.AllDirectories))
-                {
-                    byte[] data = File.ReadAllBytes(file);
-                    sha.TransformBlock(data, 0, data.Length, data, 0);
-                }
+                byte[] data = File.ReadAllBytes(file);
+                sha.TransformBlock(data, 0, data.Length, data, 0);
             }
-            sha.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
-
-            return ToHexString(sha.Hash!).ToLower().Substring(0, 32);
         }
+        sha.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+
+        return ToHexString(sha.Hash!).ToLower().Substring(0, 32);
     }
 
     public static string RenamePsmdcp(string packageDir, string name)
@@ -129,41 +128,34 @@ It will try to produce a bit to bit identical .nupkg as long as the packed conte
 
         foreach (XElement rs in doc.Root.Elements(ns + "Relationship"))
         {
-            using (var sha = SHA256.Create())
+            using var sha = SHA256.Create();
+            if (rs.Attribute("Target")!.Value.Contains(".psmdcp"))
             {
-                if (rs.Attribute("Target")!.Value.Contains(".psmdcp"))
-                {
-                    rs.Attribute("Target")!.Value = "/" + psmdcpPath;
-                }
-
-                string s = "/" + psmdcpPath + rs.Attribute("Target")!.Value;
-                byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(s));
-                string id = "R" + ToHexString(hash).Substring(0, 16);
-                rs.Attribute("Id")!.Value = id;
+                rs.Attribute("Target")!.Value = "/" + psmdcpPath;
             }
+
+            string s = "/" + psmdcpPath + rs.Attribute("Target")!.Value;
+            byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(s));
+            string id = string.Concat("R", ToHexString(hash).AsSpan(0, 16));
+            rs.Attribute("Id")!.Value = id;
         }
 
         doc.Save(path);
     }
 
-    public static string ToHexString(byte[] arr)
-    {
-        return BitConverter.ToString(arr).ToLower().Replace("-", "");
-    }
+    public static string ToHexString(byte[] arr) => BitConverter.ToString(arr).ToLower().Replace("-", "");
+    public static void ReplaceLineEndings(string filename) => File.WriteAllText(filename, File.ReadAllText(filename).ReplaceLineEndings("\r\n"));
 
     public static void ZipDirectory(string outFile, string directory, IEnumerable<string> files, DateTime dateTime)
     {
         using var s = new ZipArchive(File.Create(outFile), ZipArchiveMode.Create);
         foreach (string filePath in files)
         {
-            string absolutePath = Path.Combine(directory, filePath);
             var entry = s.CreateEntry(filePath);
             entry.LastWriteTime = dateTime;
-            using var fs = File.OpenRead(absolutePath);
+            using var fs = File.OpenRead(Path.Combine(directory, filePath));
             using var entryS = entry.Open();
             fs.CopyTo(entryS);
         }
     }
-    public static void ReplaceLineEndings(string filename)
-        => File.WriteAllText(filename, File.ReadAllText(filename).ReplaceLineEndings("\r\n"));
 }
