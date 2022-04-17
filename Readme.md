@@ -16,7 +16,7 @@ Then run it on your nupkg with
 ```
 NupkgDeterministicator <nupkg path> (optional date)
 ```
-Your nupkg will be modified to become deterministic.
+Your nupkg will be modified to become deterministic (your build output must be deterministic too or it will be useless).
 
 Basically, it replaces randoms ID with a deterministic one, and changes the build date to a fixed one.
 
@@ -27,7 +27,7 @@ Reproducible builds allow to easily check if the distributed binaries are the pr
 
 More at https://reproducible-builds.org/.
 
-# So why NuGet don't do it by default ?
+# So why NuGet don't allow you to do it ?
 
 NuGet did implement the feature, but [rolled it back](https://github.com/NuGet/Home/issues/8599) soon after, because it was a breaking change for some deploy tool.  
 Basically, because the date of the dll is older or equal to the dll deployed, the tool doesn't deploy it.
