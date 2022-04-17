@@ -63,17 +63,6 @@ It will try to produce a bit to bit identical .nupkg as long as the packed conte
             int index = fileList.FindIndex(x => x.Contains(".psmdcp"));
             fileList[index] = newPsmdcpPath;
 
-            IEnumerable<string> files = Directory.EnumerateFiles(tempDir, "*.json", SearchOption.AllDirectories)
-                .Concat(Directory.EnumerateFiles(tempDir, "*.xml", SearchOption.AllDirectories))
-                .Concat(Directory.EnumerateFiles(tempDir, "*.rels", SearchOption.AllDirectories))
-                .Concat(Directory.EnumerateFiles(tempDir, "*.psmdcp", SearchOption.AllDirectories))
-                .Concat(Directory.EnumerateFiles(tempDir, "*.nuspec", SearchOption.AllDirectories));
-
-            foreach (string filename in files)
-            {
-                ReplaceLineEndings(filename);
-            }
-
             ZipDirectory(path, tempDir, fileList, dateTime);
         }
         finally
@@ -144,7 +133,6 @@ It will try to produce a bit to bit identical .nupkg as long as the packed conte
     }
 
     public static string ToHexString(byte[] arr) => BitConverter.ToString(arr).ToLower().Replace("-", "");
-    public static void ReplaceLineEndings(string filename) => File.WriteAllText(filename, File.ReadAllText(filename).ReplaceLineEndings("\r\n"));
 
     public static void ZipDirectory(string outFile, string directory, IEnumerable<string> files, DateTime dateTime)
     {
