@@ -7,5 +7,11 @@
 		<PackAsTool>true</PackAsTool>
 		<ToolCommandName>NupkgDeterministicator</ToolCommandName>
 		<Version>1.0.0</Version>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\Readme.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
 </Project>
