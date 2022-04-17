@@ -10,7 +10,7 @@
 
 Install it with
 ```
-dotnet tool install -g NupkgDeterministicator
+dotnet tool install -g Kuinox.NupkgDeterministicator
 ```
 Then run it on your nupkg with
 ```
