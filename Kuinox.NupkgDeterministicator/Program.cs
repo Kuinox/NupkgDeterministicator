@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
 
-namespace LibHacBuild;
+namespace Kuinox.NupkgDeterministicator;
 
 public class Build
 {
