@@ -55,7 +55,7 @@ Reproducible builds allow to easily check if the distributed binaries are the pr
 
 More at https://reproducible-builds.org/.
 
-# So why NuGet don't allow you to do it?
+# So why doesn't NuGet allow you to do it?
 
 NuGet did implement the feature, but [rolled it back](https://github.com/NuGet/Home/issues/8599) soon after, because it was a breaking change for some deploy tool.  
 Basically, because the date of the dll is older or equal to the dll deployed, the tool doesn't deploy it.
