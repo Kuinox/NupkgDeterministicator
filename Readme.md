@@ -60,7 +60,7 @@ More at https://reproducible-builds.org/.
 NuGet did implement the feature, but [rolled it back](https://github.com/NuGet/Home/issues/8599) soon after, because it was a breaking change for some deploy tool.  
 Basically, because the date of the dll is older or equal to the dll deployed, the tool doesn't deploy it.
 
-Now the NuGet team doesn't want to enable the feature, [even with an user-provided datetime](https://github.com/NuGet/Home/issues/8601#issuecomment-770250302), because improper usage(hardcoding the date) will cause issues to some deploy tool.
+Now the NuGet team doesn't want to enable the feature, [even with an user-provided datetime](https://github.com/NuGet/Home/issues/8601#issuecomment-770250302), because improper usage(hardcoding the date) will cause issues to these (faulty) deploy tool.
 
 Well, personally, I don't care about these deploy tool, so I will use a fixed date.  
 If you care about it, the fix is easy: Take the date of the commit your are building from.
