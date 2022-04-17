@@ -20,6 +20,29 @@ Your nupkg will be modified to become deterministic (your build output must be d
 
 Basically, it replaces randoms ID with a deterministic one, and changes the build date to a fixed one.
 
+# Check that it works
+
+Build your nupkg multiples times, then run NupkgDeterministicator on it, the Hash should now be the same.
+
+```
+PS C:\dev\CK\CK-Core-Projects\CK-Core\CK.Core\bin\Debug> gci | get-FileHash
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          632DB10FB989FB7F2DB1061711D2EF5518009EA90F95E0D8BC80DDE98C4B7437       C:\dev\CK\CK-Core-Projects\CK-Core\CK.Core\bin\Debug\CK.Core.0.0.0-0-build0.nupkg
+SHA256          CC46AA6BB33941739ABDCB51C1E1F43ED1E5537A7E1C1BA345EDC074C3254B72       C:\dev\CK\CK-Core-Projects\CK-Core\CK.Core\bin\Debug\CK.Core.0.0.0-0-build1.nupkg
+
+
+PS C:\dev\CK\CK-Core-Projects\CK-Core\CK.Core\bin\Debug> NupkgDeterministicator .\CK.Core.0.0.0-0-build0.nupkg
+PS C:\dev\CK\CK-Core-Projects\CK-Core\CK.Core\bin\Debug> NupkgDeterministicator .\CK.Core.0.0.0-0-build1.nupkg
+PS C:\dev\CK\CK-Core-Projects\CK-Core\CK.Core\bin\Debug> gci | get-FileHash
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          6C78298D641A118C95F6C1A6BFB5C3832AACB55E01F902EF988E92F9A98DA151       C:\dev\CK\CK-Core-Projects\CK-Core\CK.Core\bin\Debug\CK.Core.0.0.0-0-build0.nupkg
+SHA256          6C78298D641A118C95F6C1A6BFB5C3832AACB55E01F902EF988E92F9A98DA151       C:\dev\CK\CK-Core-Projects\CK-Core\CK.Core\bin\Debug\CK.Core.0.0.0-0-build1.nupkg
+```
+
 # It doesn't work!
 
 Make sure that your DLLs & content is deterministic!
