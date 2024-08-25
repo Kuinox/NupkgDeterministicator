@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -18,6 +19,8 @@ public class Build
 
     public static int Main(string[] args)
     {
+        var rootCommand = new RootCommand(Help);
+
         if (args.Length == 0)
         {
             Console.Error.WriteLine("You must specify the nupkg path.\n" + Help);
@@ -36,7 +39,7 @@ public class Build
         var dateTime = args.Length > 1 ? DateTime.Parse(args[1], CultureInfo.InvariantCulture) : new DateTime(2000, 1, 1);
 
         RepackNugetPackage(args[0], dateTime);
-        return 0;
+        return rootCommand.Invoke(args);
     }
 
     const string Help =
