@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.Globalization;
+using System.CommandLine.Parsing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -19,32 +19,51 @@ public class Build
 
     public static int Main(string[] args)
     {
+        // todo: a directory path should imply all package files (*.nupkg, *.snupkg) in the directory should be determinized
+        // todo: allow multiple paths? Will require new --datetime option.
+        var argPathToNupkg = new Argument<string>(
+                "path-to-nupkg",
+                "The full or relative path of a .nupkg, .symbols.nupkg, or .snupkg file."
+        )
+        {
+            Arity = new(1, 1)
+        };
+
+        /* 
+        todo: 
+        BREAKING CHANGE: convert to new Option<DateTime>("--datetime") to enable passing multiple paths
+        */
+        var argDateTime = new Argument<DateTime>(
+            name: "optional-date",
+            getDefaultValue: () => DefaultDateTime,
+            description: $"The optional {nameof(DateTime)} to assign to the Modified Date of every file in a given nupkg.\nDefault: {DefaultDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}"
+        )
+        {
+            Arity = new(0, 1)
+        };
+
         var rootCommand = new RootCommand(Help);
+        rootCommand.AddArgument(argPathToNupkg);
+        rootCommand.AddArgument(argDateTime);
 
-        if (args.Length == 0)
-        {
-            Console.Error.WriteLine("You must specify the nupkg path.\n" + Help);
-            return 1;
-        }
-        if (args.Length > 2)
-        {
-            Console.Error.WriteLine("Too many arguments provided.\n" + Help);
-        }
+        rootCommand.SetHandler(
+            (pathToNupkg, dateTime) =>
+            {
+                if (!File.Exists(pathToNupkg))
+                    Console.Error.WriteLine($"File {args[0]} doesn't exist");
+                RepackNugetPackage(pathToNupkg, dateTime);
+            },
+            argPathToNupkg,
+            argDateTime
+        );
 
-        if (!File.Exists(args[0]))
-        {
-            Console.Error.WriteLine($"File {args[0]} doesn't exist");
-        }
-
-        var dateTime = args.Length > 1 ? DateTime.Parse(args[1], CultureInfo.InvariantCulture) : new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        RepackNugetPackage(args[0], dateTime);
         return rootCommand.Invoke(args);
     }
 
+    static readonly DateTime DefaultDateTime = new(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
     const string Help =
-@"Usage: nupkg-deterministicator [path-to-nupkg] (optional-date)
-Try to make a NuGet package (.nupkg) deterministic.
+@"Try to make a NuGet package (.nupkg) deterministic.
 It will try to produce a bit to bit identical .nupkg as long as the packed content is the same.
 ";
 
