@@ -36,7 +36,7 @@ public class Build
             Console.Error.WriteLine($"File {args[0]} doesn't exist");
         }
 
-        var dateTime = args.Length > 1 ? DateTime.Parse(args[1], CultureInfo.InvariantCulture) : new DateTime(2000, 1, 1);
+        var dateTime = args.Length > 1 ? DateTime.Parse(args[1], CultureInfo.InvariantCulture) : new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         RepackNugetPackage(args[0], dateTime);
         return rootCommand.Invoke(args);
