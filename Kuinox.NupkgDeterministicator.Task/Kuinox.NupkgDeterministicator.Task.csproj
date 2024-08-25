@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference
+			Include="..\Kuinox.NupkgDeterministicator\Kuinox.NupkgDeterministicator.csproj"
+			SkipGetTargetFrameworkProperties="true"
+			ReferenceOutputAssembly="false"
+			ExcludeAssets="all"
+			/>
+  </ItemGroup>
+
+  	<ItemGroup>
+		<PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.10.4" />
+	</ItemGroup>
+
+
+    <ItemGroup>
+        <None Include="$(MSBuildThisFileDirectory)..\Kuinox.NupkgDeterministicator\bin\$(Configuration)\net6.0\Kuinox.NupkgDeterministicator.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>true</Pack>
+			<PackagePath>tools</PackagePath>
+			<Visible>false</Visible>
+		</None>
+		<None Include="$(MSBuildThisFileDirectory)..\Kuinox.NupkgDeterministicator\bin\$(Configuration)\net6.0\Kuinox.NupkgDeterministicator.runtimeconfig.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>true</Pack>
+			<PackagePath>tools</PackagePath>
+			<Visible>false</Visible>
+		</None>
+    </ItemGroup>
+
+</Project>
