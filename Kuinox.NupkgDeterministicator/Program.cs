@@ -36,7 +36,10 @@ public class Build
             Arity = new(0, 1)
         };
 
-        var rootCommand = new RootCommand(Help);
+        var rootCommand = new RootCommand(
+@"Try to make a NuGet package (.nupkg) deterministic.
+It will try to produce a bit to bit identical .nupkg as long as the packed content is the same.
+");
         rootCommand.AddArgument(argPathToNupkg);
         rootCommand.AddArgument(argDateTime);
 
@@ -55,11 +58,6 @@ public class Build
     }
 
     static readonly DateTime DefaultDateTime = new(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-    const string Help =
-@"Try to make a NuGet package (.nupkg) deterministic.
-It will try to produce a bit to bit identical .nupkg as long as the packed content is the same.
-";
 
     public static void RepackNugetPackage(string path, DateTime dateTime)
     {
