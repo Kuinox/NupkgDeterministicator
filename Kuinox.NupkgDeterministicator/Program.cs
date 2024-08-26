@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -105,7 +105,9 @@ It will try to produce a bit to bit identical .nupkg as long as the packed conte
     {
         string fileName = Directory.EnumerateFiles(packageDir, "*.psmdcp", SearchOption.AllDirectories).Single();
         string newFileName = Path.Combine(Path.GetDirectoryName(fileName)!, name + ".psmdcp");
-        Directory.Move(fileName, newFileName);
+
+        if (fileName != newFileName)
+            Directory.Move(fileName, newFileName);
 
         return Path.GetRelativePath(packageDir, newFileName).Replace('\\', '/');
     }
