@@ -19,8 +19,6 @@ public class Build
 
     public static int Main(string[] args)
     {
-        // todo: a directory path should imply all package files (*.nupkg, *.snupkg) in the directory should be determinized
-        // todo: allow multiple paths? Will require new --datetime option.
         var argPathToNupkg = new Argument<string>(
                 "path-to-nupkg",
                 "The full or relative path of a .nupkg, .symbols.nupkg, or .snupkg file."
@@ -29,10 +27,6 @@ public class Build
             Arity = new(1, 1)
         };
 
-        /* 
-        todo: 
-        BREAKING CHANGE: convert to new Option<DateTime>("--datetime") to enable passing multiple paths
-        */
         var argDateTime = new Argument<DateTime>(
             name: "optional-date",
             getDefaultValue: () => DefaultDateTime,
