@@ -1,5 +1,6 @@
+
 <h1 align="center">
-	Nupkg Deterministicator 
+	As nuget is now deterministic, this tool isn't needed anymore.
 </h1>
 
 <p align="center">
