@@ -29,8 +29,13 @@ public class Build
 
         var argDateTime = new Argument<DateTime>(
             name: "optional-date",
-            getDefaultValue: () => DefaultDateTime,
-            description: $"The optional {nameof(DateTime)} to assign to the Modified Date of every file in a given nupkg.\nDefault: {DefaultDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}"
+            getDefaultValue: () => {
+                var source_date_epoch = Environment.GetEnvironmentVariable("SOURCE_DATE_EPOCH");
+                if (source_date_epoch is null) return DefaultDateTime;
+                return new DateTime(DateTime.UnixEpoch.Ticks +
+                    long.Parse(source_date_epoch, System.Globalization.CultureInfo.InvariantCulture) * TimeSpan.TicksPerSecond, DateTimeKind.Utc);
+            },
+            description: $"The optional {nameof(DateTime)} to assign to the Modified Date of every file in a given nupkg.\nDefault: SOURCE_DATE_EPOCH or {DefaultDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}"
         )
         {
             Arity = new(0, 1)
